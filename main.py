@@ -5,4 +5,6 @@ def main():
 
 
 file_path = "C:/Users/Ammar/Documents/DocuMind_AI/data/documents/sample_professional_invoice.pdf"
-load_pdf(file_path)
+pages = load_pdf(file_path)
+
+print(pages)
