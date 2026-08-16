@@ -1,6 +1,6 @@
 import fitz
 import pymupdf
-file_path = "C:/Users/Ammar/Documents/DocuMind_AI/data/documents/sample_professional_invoice.pdf"
+
 def load_pdf(file_path):
     document = fitz.open(file_path)
     #print(len(document))
@@ -27,5 +27,3 @@ def load_pdf(file_path):
     }
 
     pages.append(page_data)
-
-load_pdf(file_path)
