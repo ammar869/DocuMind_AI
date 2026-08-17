@@ -1,5 +1,7 @@
 from src.Model import llm
-
+from src.schema import DocumentInfo
+#schemas.py       = WHAT the output must look like
+#structurer.py    = HOW we ask the LLM to produce that output
 
 def structure_document(pages):
 
@@ -24,6 +26,6 @@ Document:
 {document_text}
 """
 
-    response = llm.invoke(prompt)
-
-    return response.content
+    structured_llm = llm.with_structured_output(DocumentInfo)
+    response = structured_llm.invoke(prompt)
+    return response
