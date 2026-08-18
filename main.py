@@ -8,9 +8,12 @@ from src.indexing.chunker import chunk_pages
 from src.indexing.embedding import embeddings
 from src.indexing.vectorstore import vector_store
 from src.rag.chain import rag_chain
-
+import uuid
 
 file_path = "C:/Users/Ammar/Documents/DocuMind_AI/data/documents/sample_professional_invoice.pdf"
+
+document_id = str(uuid.uuid4())
+
 
 
 pages = load_pdf(file_path)
@@ -28,15 +31,15 @@ texts = [chunk["text"] for chunk in chunks]
 
 metadatas = [
     {
+        "document_id": document_id,
         "page_number": chunk["page_number"],
         "chunk_id": chunk["chunk_id"]
     }
     for chunk in chunks
 ]
 
-
 ids = [
-    chunk["chunk_id"]
+    f"{document_id}_{chunk['chunk_id']}"
     for chunk in chunks
 ]
 
@@ -86,4 +89,8 @@ print(result["answer"])
 print("\n===== Sources =====")
 
 for source in result["sources"]:
-    print(source)
+
+    print(
+        f"📄 Page {source['page_number']} "
+        f"| Chunk {source['chunk_id']}"
+    )
