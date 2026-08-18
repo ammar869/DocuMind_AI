@@ -10,6 +10,12 @@ pages = load_pdf(file_path)
 
 cleaned_pages = clean_pages(pages)
 
+chunks = chunk_pages(cleaned_pages)
+
+for chunk in chunks:
+    print(chunk)
+    print("-" * 50)
+
 result = structure_document(cleaned_pages)
 
 print(result)
