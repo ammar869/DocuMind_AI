@@ -6,6 +6,7 @@ from src.structurer import structure_document
 from src.indexing.chunker import chunk_pages
 from src.indexing.embedding import embeddings
 from src.indexing.vectorstore import vector_store
+from src.rag.chain import answer_question
 file_path = "C:/Users/Ammar/Documents/DocuMind_AI/data/documents/sample_professional_invoice.pdf"
 
 pages = load_pdf(file_path)
@@ -59,3 +60,9 @@ vector_store.add_texts(
 #     print("PAGE:", page["page_number"])
 #     print(page["text"])
 #     print("-" * 50)
+question = input("Ask something about your document: ")
+
+answer = answer_question(question)
+
+print("\n===== DocuMind =====")
+print(answer)
