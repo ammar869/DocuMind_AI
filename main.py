@@ -77,7 +77,13 @@ vector_store.add_texts(
 
 question = input("Ask something about your document: ")
 
-answer = rag_chain.invoke(question)
+result = rag_chain.invoke(question)
 
 print("\n===== DocuMind =====")
-print(answer)
+
+print(result["answer"])
+
+print("\n===== Sources =====")
+
+for source in result["sources"]:
+    print(source)
