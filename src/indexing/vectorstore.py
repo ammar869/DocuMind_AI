@@ -1,25 +1,10 @@
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+
+from src.indexing.embedding import embeddings
 
 
-def chunk_pages(pages):
-
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150
-    )
-
-    chunks = []
-
-    for page in pages:
-
-        page_chunks = splitter.split_text(page["text"])
-
-        for chunk_index, text in enumerate(page_chunks):
-
-            chunks.append({
-                "chunk_id": f"{page['page_number']}_{chunk_index}",
-                "page_number": page["page_number"],
-                "text": text
-            })
-
-    return chunks
+vector_store = Chroma(
+    collection_name="documind_documents",
+    embedding_function=embeddings,
+    persist_directory="./data/chroma"
+)
