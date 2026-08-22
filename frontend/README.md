@@ -34,7 +34,7 @@ npm run dev
 Copy `.env.example` to `.env` and update:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000/api
 ```
 
 The placeholder API functions live in `src/services/api.ts`.

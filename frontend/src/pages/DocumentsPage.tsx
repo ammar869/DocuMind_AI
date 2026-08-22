@@ -1,9 +1,42 @@
+import { useEffect, useState } from 'react'
 import DocumentList from '../components/documents/DocumentList'
 import { useDocumentSearch } from '../hooks/useDocumentSearch'
-import { mockDocuments } from '../lib/mockData'
+import { getDocuments } from '../services/api'
+import type { DocumentSummary } from '../types/document'
 
 function DocumentsPage() {
-  const { query, setQuery, filteredDocuments } = useDocumentSearch(mockDocuments)
+  const [documents, setDocuments] = useState<DocumentSummary[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+  const { query, setQuery, filteredDocuments } = useDocumentSearch(documents)
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadDocuments() {
+      try {
+        const documentsFromApi = await getDocuments()
+
+        if (isMounted) {
+          setDocuments(documentsFromApi)
+        }
+      } catch {
+        if (isMounted) {
+          setErrorMessage('Could not load documents. Make sure FastAPI is running.')
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadDocuments()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <div className="page-stack">
@@ -26,7 +59,9 @@ function DocumentsPage() {
         </label>
       </section>
 
-      <DocumentList documents={filteredDocuments} />
+      {isLoading ? <div className="empty-state">Loading documents...</div> : null}
+      {errorMessage ? <div className="empty-state">{errorMessage}</div> : null}
+      {!isLoading && !errorMessage ? <DocumentList documents={filteredDocuments} /> : null}
     </div>
   )
 }

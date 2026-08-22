@@ -5,6 +5,7 @@ import { uploadDocument } from '../services/api'
 function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [status, setStatus] = useState('Waiting for a document.')
+  const [isUploading, setIsUploading] = useState(false)
 
   async function handleUpload() {
     if (!selectedFile) {
@@ -12,9 +13,18 @@ function UploadPage() {
       return
     }
 
-    setStatus('Preparing upload placeholder...')
-    const response = await uploadDocument(selectedFile)
-    setStatus(response.message)
+    setIsUploading(true)
+    setStatus('Uploading document...')
+
+    try {
+      const response = await uploadDocument(selectedFile)
+      setStatus(response.message)
+      setSelectedFile(null)
+    } catch {
+      setStatus('Upload failed. Make sure FastAPI is running and the file is a PDF.')
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   return (
@@ -29,8 +39,8 @@ function UploadPage() {
       <section className="panel">
         <UploadBox selectedFile={selectedFile} onFileChange={setSelectedFile} />
         <div className="upload-actions">
-          <button type="button" onClick={handleUpload}>
-            Upload document
+          <button type="button" onClick={handleUpload} disabled={isUploading}>
+            {isUploading ? 'Uploading...' : 'Upload document'}
           </button>
           <p>{status}</p>
         </div>

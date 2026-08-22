@@ -1,10 +1,63 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import StatusBadge from '../components/ui/StatusBadge'
-import { mockDocumentDetails } from '../lib/mockData'
+import { getDocumentById } from '../services/api'
+import type { DocumentDetails } from '../types/document'
 
 function DocumentDetailsPage() {
   const { id } = useParams()
-  const document = mockDocumentDetails.find((item) => item.id === id)
+  const [document, setDocument] = useState<DocumentDetails | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadDocument() {
+      if (!id) {
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        const documentFromApi = await getDocumentById(id)
+
+        if (isMounted) {
+          setDocument(documentFromApi)
+        }
+      } catch {
+        if (isMounted) {
+          setErrorMessage('Could not load this document from FastAPI.')
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadDocument()
+
+    return () => {
+      isMounted = false
+    }
+  }, [id])
+
+  if (isLoading) {
+    return <section className="empty-state">Loading document...</section>
+  }
+
+  if (errorMessage) {
+    return (
+      <section className="empty-state">
+        <strong>Backend request failed</strong>
+        <p>{errorMessage}</p>
+        <Link to="/documents" className="text-link">
+          Back to documents
+        </Link>
+      </section>
+    )
+  }
 
   if (!document) {
     return (
