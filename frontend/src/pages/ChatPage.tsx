@@ -1,11 +1,20 @@
-import { FormEvent, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { initialMessages } from '../lib/mockData'
 import { sendChatMessage } from '../services/api'
 import type { ChatMessage } from '../types/chat'
+import type { FormEvent } from 'react'
 
 function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [question, setQuestion] = useState('')
+
+  useEffect(() => {
+    document.title = `DocuMind AI - Chat (${messages.length})`
+
+    return () => {
+      document.title = 'DocuMind AI'
+    }
+  }, [messages.length])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
